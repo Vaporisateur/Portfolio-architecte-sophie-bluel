@@ -132,10 +132,30 @@ li:hover {
 	grid-column-gap: 20px;
 	grid-row-gap: 20px;
 }
-
 .gallery img {
 	width: 100%;
-
+}
+#categoriesList {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin: 50px 0 50px 0;
+}
+#categoriesList button {
+	padding: 9px;
+	border-radius : 60px;
+	border: 1px solid #1D6154;
+	color: #1D6154;
+	background-color: white;
+}
+#categoriesList button:hover {
+	background-color: #1D6154;
+	color: white;
+	cursor: pointer;
+}
+.button-font {
+	font-family: 'Syne';
+	font-weight: 700;
 }
 #contact {
 	width: 50%;
