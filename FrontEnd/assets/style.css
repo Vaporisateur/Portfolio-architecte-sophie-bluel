@@ -154,11 +154,11 @@ li:hover {
 	border: 1px solid #1D6154;
 	color: #1D6154;
 	background-color: white;
+	cursor: pointer;
 }
-#categoriesList button:hover {
+#categoriesList .color-btn {
 	background-color: #1D6154;
 	color: white;
-	cursor: pointer;
 }
 .button-font {
 	font-family: 'Syne';
@@ -166,7 +166,7 @@ li:hover {
 }
 #contact {
 	width: 50%;
-margin: auto;
+	margin: auto;
 }
 #contact > * {
 	text-align: center;
