@@ -176,9 +176,6 @@ li:hover {
 .forgot-password a {
     color: #3D3D3D;
 }
-
-
-
 input[type="submit"]{
 	font-family: 'Syne';
 	font-weight: 700;
@@ -190,10 +187,8 @@ input[type="submit"]{
 	text-align: center;
 	border-radius: 60px ;
     border: none;
+    cursor: pointer;
 }
-
-
-
 footer nav ul {
 	display: flex;
 	justify-content: flex-end;

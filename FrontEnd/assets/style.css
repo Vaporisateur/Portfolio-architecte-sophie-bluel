@@ -105,6 +105,9 @@ nav li:hover a {
 li:hover {
 	color: #B1663C;
 }
+#login {
+	cursor: pointer;
+}
 #introduction {
 	display: flex;
 	align-items: center;
