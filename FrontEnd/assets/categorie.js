@@ -1,80 +1,61 @@
-const apiUrl = "http://localhost:5678/api/"; // URL de l'API
+const apiUrl = "http://localhost:5678/api/";
+document.addEventListener("DOMContentLoaded", () => {
+    const getCategories = () => {
+        fetch(apiUrl + "categories")
+            .then(response => response.json())
+            .then(data => {
+                const categoriesList = document.getElementById("categoriesList");
+                categoriesList.innerHTML = "";
 
-// Fonction pour récupérer les catégories
-function getCategories() {
-    fetch(apiUrl + "categories")
-        .then(response => response.json())
-        .then(data => {
-            let categoriesList = document.getElementById("categoriesList");
-            categoriesList.innerHTML = "";
+                const allButton = document.createElement("button");
+                allButton.classList.add("button-font", "color-btn");
+                allButton.innerHTML = "Tous";
+                allButton.id = "all";
+                categoriesList.appendChild(allButton);
 
-            let allButton = document.createElement("button");
-            allButton.classList.add("button-font", "color-btn");
-            allButton.innerHTML = "Tous";
-            allButton.id = "all";
-            categoriesList.appendChild(allButton);
+                data.forEach(category => {
+                    const categoryElement = document.createElement("button");
+                    categoryElement.classList.add("button-font", "btn-category");
+                    categoryElement.innerHTML = category.name;
+                    categoryElement.id = category.id;
+                    categoriesList.appendChild(categoryElement);
+                });
 
-            data.forEach(category => {
-                let categoryElement = document.createElement("button");
-                categoryElement.classList.add("button-font");
-                categoryElement.innerHTML = category.name;
-                categoryElement.id = category.id;
-                categoriesList.appendChild(categoryElement);
-            });
-
-            categoriesList.addEventListener("click", function(event) {
-                if (event.target.tagName === "BUTTON") {
-                    setActiveButton(event.target);
-                    if (event.target.id === "all") {
-                        getAllProducts();
-                    } else {
-                        getProductsByCategory(event.target.id);
+                categoriesList.addEventListener("click", event => {
+                    const target = event.target;
+                    if (target.classList.contains("btn-category") || target.id === "all") {
+                        setActiveButton(target);
+                        fetchAndRenderProducts(target.id === "all" ? null : target.id);
                     }
-                }
+                });
             });
+    };
+
+    const fetchAndRenderProducts = (category = null) => {
+        fetch(apiUrl + "works")
+            .then(response => response.json())
+            .then(data => {
+                if (category) data = data.filter(work => work.categoryId === parseInt(category));
+                renderGallery(data);
+            });
+    };
+
+    const renderGallery = works => {
+        const galleryList = document.getElementById("gallery");
+        galleryList.innerHTML = "";
+        works.forEach(work => {
+            const workElement = document.createElement("figure");
+            workElement.classList.add("work");
+            workElement.innerHTML = `<img src="${work.imageUrl}" alt="${work.title}"><figcaption>${work.title}</figcaption>`;
+            galleryList.appendChild(workElement);
         });
-}
+    };
 
-// Fonction pour récupérer toutes les images
-function getAllProducts() {
-    fetch(apiUrl + "works")
-        .then(response => response.json())
-        .then(data => {
-            renderGallery(data);
-        });
-}
+    const setActiveButton = button => {
+        document.querySelectorAll("#categoriesList button").forEach(btn => btn.classList.remove("color-btn"));
+        button.classList.add("color-btn");
+    };
 
-// Fonction pour récupérer les images par catégorie
-function getProductsByCategory(category) {
-    fetch(apiUrl + "works")
-        .then(response => response.json())
-        .then(data => {
-            let filteredWorks = data.filter(work => work.categoryId === parseInt(category));
-            renderGallery(filteredWorks);
-        });
-}
-
-// Fonction pour afficher la galerie
-function renderGallery(works) {
-    let galleryList = document.getElementById("gallery");
-    galleryList.innerHTML = "";
-
-    works.forEach(work => {
-        let workElement = document.createElement("figure");
-        workElement.classList.add("work");
-        workElement.innerHTML = `
-            <img src="${work.imageUrl}" alt="${work.title}">
-            <figcaption>${work.title}</figcaption>
-        `;
-        galleryList.appendChild(workElement);
-    });
-}
-
-// Fonction pour définir le bouton actif
-function setActiveButton(button) {
-    document.querySelectorAll("#categoriesList button").forEach(btn => btn.classList.remove("color-btn"));
-    button.classList.add("color-btn");
-}
-
-getCategories(); // Appel de la fonction pour récup les catégories
-getAllProducts(); // Appel de la fonction pour récupérer tous les produits
+    getCategories();
+    fetchAndRenderProducts();
+});

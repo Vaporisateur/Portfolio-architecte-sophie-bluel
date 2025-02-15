@@ -9,10 +9,18 @@
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
-	<script src="./assets/categorie.js" defer></script>
 	<script src="./assets/AuthCheck.js"></script>
+	<script src="./assets/categorie.js"></script>
+	<script src="./assets/modal.js" defer></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+	<div id="mode-edition">
+		<div id="mode-edition-container">
+			<i class="fa-regular fa-pen-to-square"></i>
+			<p>Mode édition</p>
+		</div>
+	</div>
 <header>
 	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
 	<nav>
@@ -37,7 +45,12 @@
 		</article>
 	</section>
 	<section id="portfolio">
-		<h2>Mes Projets</h2>
+		<div id="portfolio-header">
+			<h2>Mes Projets</h2>
+			<div id="addEditButton">
+
+			</div>
+		</div>
 		<div id="categoriesList"></div>
 		<div class="gallery" id="gallery"></div>
 	</section>
@@ -63,5 +76,38 @@
 		</ul>
 	</nav>
 </footer>
+<section class="modal" id="modalGallery">
+	<div class="modal-wrapper js-modal-stop">
+		<button id="modal-close"><i class="fa-solid fa-xmark"></i></button>
+		<h3>Galerie photo</h3>
+		<div id="modal-content">
+		</div>
+		<div class="border-line"></div>
+		<button type="button" id="addPicture">Ajouter une photo</button>
+	</div>
+</section>
+
+<section class="modal" id="modalAddWork">
+	<div class="modal-wrapper js-modal-stop">
+		<button id="modal-back"><i class="fa-solid fa-arrow-left"></i></i></button>
+		<button id="modal-close"><i class="fa-solid fa-xmark"></i></button>
+		<h3>Ajout photo</h3>
+		<form id="addWorkForm">
+			<div class="AddPicture-container">
+				<i class="fa-regular fa-image"></i>
+				<label for="file" class="FileLabel">+ Ajouter photo</label>
+				<p>jpg, png : 4mo max</p>
+				<input type="file" name="image" id="file" accept="image/jpg, image/png" required>
+				<img id="previewImage" src="#" alt="Aperçu de l'image">
+			</div>
+			<label for="title">Titre</label>
+			<input type="text" name="title" id="title" required>
+			<label for="categorySelect">Catégorie</label>
+			<select id="categorySelect" name="category" required></select>
+			<div class="border-line"></div>
+			<button type="submit" id="addWorkButton">Valider</button>
+		</form>
+	</div>
+</section>
 </body>
 </html>
