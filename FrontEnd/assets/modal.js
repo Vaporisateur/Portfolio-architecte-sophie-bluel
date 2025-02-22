@@ -130,6 +130,14 @@ function fetchAndRenderCategories() {
     let categoriesSelect = document.getElementById("categorySelect");
     categoriesSelect.innerHTML = "";
 
+    // Ajouter une option vide par défaut qui n'est pas visible dans le menu déroulant
+    let defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.innerHTML = "";
+    defaultOption.hidden = true;
+    defaultOption.selected = true;
+    categoriesSelect.appendChild(defaultOption);
+
     categoriesArray.forEach(category => {
         let categoryOption = document.createElement("option");
         categoryOption.value = category.id;
@@ -222,6 +230,30 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
+// Fonction pour vérifier si tous les champs sont remplis
+function checkFormFields() {
+    let fileInput = document.getElementById("file");
+    let titleInput = document.getElementById("title");
+    let categorySelect = document.getElementById("categorySelect");
+    let submitButton = document.getElementById("addWorkButton");
+
+    if (fileInput.files.length > 0 && titleInput.value.trim() !== "" && categorySelect.value !== "") {
+        submitButton.style.backgroundColor = "#1d6154";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    let fileInput = document.getElementById("file");
+    let titleInput = document.getElementById("title");
+    let categorySelect = document.getElementById("categorySelect");
+
+    if (fileInput && titleInput && categorySelect) {
+        fileInput.addEventListener("change", checkFormFields);
+        titleInput.addEventListener("input", checkFormFields);
+        categorySelect.addEventListener("change", checkFormFields);
+    }
+});
+
 // Fonction pour reset le formulaire
 function resetForm() {
     let form = document.getElementById("addWorkForm");
@@ -233,8 +265,10 @@ function resetForm() {
     let text = document.querySelector(".AddPicture-container p");
     let label = document.querySelector(".FileLabel");
     let div = document.querySelector(".AddPicture-container");
+    let submitButton = document.getElementById("addWorkButton");
     div.style.padding = "19px";
     icon.style.display = "block";
     text.style.display = "block";
     label.style.display = "block";
+    submitButton.style.backgroundColor = "";
 }

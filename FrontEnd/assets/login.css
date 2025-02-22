@@ -105,6 +105,13 @@ nav li:hover a {
 li:hover {
 	color: #B1663C;
 }
+#nav-login {
+    font-weight: 600;
+}
+#error-message {
+    color: red;
+    font:inherit;
+}
 #login {
     display: flex;
     flex-direction: column;

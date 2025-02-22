@@ -15,20 +15,29 @@ function login() {
             password: password
         })
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.token) {
-                alert("Connected");
-                sessionStorage.setItem("token", data.token);
-                window.location.href = "index.html";
-            } else if (data.status === 401) {
-                alert("Not Authorized");
-            } else if (data.status === 404) {
-                alert("User not found");
+    .then(response => {
+        const errorMessageElement = document.getElementById("error-message");
+        if (!response.ok) {
+            if (response.status === 401) {
+                errorMessageElement.textContent = "Not Authorized";
+            } else if (response.status === 404) {
+                errorMessageElement.textContent = "User not found";
             } else {
-                alert("An error occurred");
+                errorMessageElement.textContent = "An error occurred";
             }
-        })
+            throw new Error('HTTP error ' + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.token) {
+            sessionStorage.setItem("token", data.token);
+            window.location.href = "index.html";
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
 
 // Bouton submit
