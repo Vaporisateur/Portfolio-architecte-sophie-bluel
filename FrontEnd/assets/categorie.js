@@ -1,9 +1,13 @@
 const apiUrl = "http://localhost:5678/api/";
+let productsArray = [];
+let categoriesArray = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     const getCategories = () => {
         fetch(apiUrl + "categories")
             .then(response => response.json())
             .then(data => {
+                categoriesArray = data;
                 const categoriesList = document.getElementById("categoriesList");
                 categoriesList.innerHTML = "";
 
@@ -25,22 +29,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     const target = event.target;
                     if (target.classList.contains("btn-category") || target.id === "all") {
                         setActiveButton(target);
-                        fetchAndRenderProducts(target.id === "all" ? null : target.id);
+                        const filteredProducts = target.id === "all" ? productsArray : productsArray.filter(work => work.categoryId === parseInt(target.id));
+                        renderProducts(filteredProducts);
                     }
                 });
             });
     };
 
-    const fetchAndRenderProducts = (category = null) => {
-        fetch(apiUrl + "works")
+    const fetchProducts = () => {
+        return fetch(apiUrl + "works")
             .then(response => response.json())
             .then(data => {
-                if (category) data = data.filter(work => work.categoryId === parseInt(category));
-                renderGallery(data);
+                productsArray = data;
+                return data;
             });
     };
 
-    const renderGallery = works => {
+    const renderProducts = works => {
         const galleryList = document.getElementById("gallery");
         galleryList.innerHTML = "";
         works.forEach(work => {
@@ -57,5 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     getCategories();
-    fetchAndRenderProducts();
+    fetchProducts().then(products => {
+        renderProducts(products);
+        fetchAndRenderWorks();
+        fetchAndRenderCategories();
+    });
 });

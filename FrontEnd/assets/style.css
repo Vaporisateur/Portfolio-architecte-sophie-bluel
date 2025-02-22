@@ -125,6 +125,10 @@ li:hover {
 	align-items: center;
 	gap: 10px;
 }
+#openModalGallery {
+	border: none;
+	background-color: inherit;
+}
 #introduction {
 	display: flex;
 	align-items: center;
