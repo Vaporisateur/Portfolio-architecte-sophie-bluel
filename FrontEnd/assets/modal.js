@@ -40,12 +40,6 @@ function addDeleteIcon() {
     });
 }
 
-document.addEventListener("click", async function(event) {
-    if (event.target.classList.contains("delete-icon")) {
-        await deleteWork(event);
-    }
-});
-
 // Fonction pour supprimer une image
 async function deleteWork(event) {
     let work = event.target.closest(".image-container");
@@ -72,6 +66,12 @@ async function deleteWork(event) {
         console.error("Error deleting work:", error);
     }
 }
+
+document.addEventListener("click", async function(event) {
+    if (event.target.classList.contains("delete-icon")) {
+        await deleteWork(event);
+    }
+});
 
 // Fait apparaitre la modal modalAddWork lors du click sur le bouton
 function showAddModal() {
