@@ -3,6 +3,8 @@ let productsArray = [];
 let categoriesArray = [];
 
 document.addEventListener("DOMContentLoaded", () => {
+    const token = sessionStorage.getItem("token");
+
     const getCategories = () => {
         fetch(apiUrl + "categories")
             .then(response => response.json())
@@ -51,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
         works.forEach(work => {
             const workElement = document.createElement("figure");
             workElement.classList.add("work");
+            workElement.id = `work-${work.id}`;
             workElement.innerHTML = `<img src="${work.imageUrl}" alt="${work.title}"><figcaption>${work.title}</figcaption>`;
             galleryList.appendChild(workElement);
         });
@@ -63,8 +66,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     getCategories();
     fetchProducts().then(products => {
+
+        // Gère le fonctionnement de la gallery et de la modal
         renderProducts(products);
         fetchAndRenderWorks();
         fetchAndRenderCategories();
+
+        // Supprime les filtres si connecté
+        if (token) {
+            const portfolio = document.getElementById("portfolio-header");
+            portfolio.style.marginBottom = "92px";
+            const categoriesList = document.getElementById("categoriesList");
+            categoriesList.remove();
+        }
     });
 });

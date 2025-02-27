@@ -1,4 +1,4 @@
-// check si l'utilisateur est connecté suivant le token
+// stock le token dans une variable
 const token = sessionStorage.getItem("token")
 // Fonction pour se logout
 function logout() {

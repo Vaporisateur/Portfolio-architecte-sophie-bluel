@@ -6,45 +6,24 @@ if (token) {
     }
 }
 
-// Fonction pour faire apparaitre la modal
+
+
+// ACTIONS DE LA MODALE 
+
+
+// Fait apparaitre la modal
 function showModal() {
     let modal = document.getElementById("modalGallery");
     modal.style.display = "flex";
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    let openModalGalleryButton = document.getElementById("openModalGallery");
-    if (openModalGalleryButton) {
-        openModalGalleryButton.addEventListener("click", showModal);
-    }
-});
-
-// Fonction pour fermer la modal
+// Ferme la modal
 function closeModal() {
     let modal = document.getElementById("modalGallery");
     modal.style.display = "none";
 }
 
 document.getElementById("modal-close").addEventListener("click", closeModal);
-
-// Fonction pour rajouter les images déjà existantes dans la modal
-function fetchAndRenderWorks() {
-    let worksList = document.getElementById("modal-content");
-    worksList.innerHTML = "";
-
-    productsArray.forEach(work => {
-        let workElement = document.createElement("figure");
-        workElement.classList.add("image-container");
-        workElement.id = work.id;
-        workElement.innerHTML = `
-            <img src="${work.imageUrl}" alt="${work.title}">
-        `;
-        worksList.appendChild(workElement);
-    });
-
-    // Appeler addDeleteIcon après avoir ajouté les images
-    addDeleteIcon();
-}
 
 // Rajoute une icone en haut a droite de chaque image
 function addDeleteIcon() {
@@ -61,40 +40,40 @@ function addDeleteIcon() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    fetchAndRenderWorks();
-});
-
-// Fonction pour supprimer une image
-function deleteWork(event) {
-    let work = event.target.closest(".image-container");
-    let workId = work.id;
-
-    fetch(apiUrl + "works/" + workId, {
-        method: "DELETE",
-        headers: {
-            "Authorization": "Bearer " + token
-        }
-    })
-        .then(response => {
-            if (response.status === 204) {
-                work.remove();
-            } else {
-                console.error("Failed to delete work:", response.status);
-            }
-        })
-        .catch(error => {
-            console.error("Error deleting work:", error);
-        });
-}
-
-document.addEventListener("click", function(event) {
+document.addEventListener("click", async function(event) {
     if (event.target.classList.contains("delete-icon")) {
-        deleteWork(event);
+        await deleteWork(event);
     }
 });
 
-// Fonction pour faire apparaitre la modal modalAddWork lors du click sur le bouton
+// Fonction pour supprimer une image
+async function deleteWork(event) {
+    let work = event.target.closest(".image-container");
+    let workId = work.id;
+
+    try {
+        let response = await fetch(apiUrl + "works/" + workId, {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        if (response.status === 204) {
+            work.remove();
+            let galleryImage = document.querySelector(`#gallery #work-${workId}`);
+            if (galleryImage) {
+                galleryImage.remove();
+            }
+        } else {
+            console.error("Failed to delete work:", response.status);
+        }
+    } catch (error) {
+        console.error("Error deleting work:", error);
+    }
+}
+
+// Fait apparaitre la modal modalAddWork lors du click sur le bouton
 function showAddModal() {
     let addModal = document.getElementById("modalAddWork");
     addModal.style.display = "flex";
@@ -104,7 +83,7 @@ function showAddModal() {
 
 document.getElementById("addPicture").addEventListener("click", showAddModal);
 
-// Fonction pour fermer la modal d'ajout de photo
+// Ferme la modal puis reset le formulaire
 function closeAddModal() {
     let addModal = document.getElementById("modalAddWork");
     let modal = document.getElementById("modalGallery");
@@ -115,7 +94,7 @@ function closeAddModal() {
 
 document.querySelector("#modalAddWork #modal-close").addEventListener("click", closeAddModal);
 
-// Fonction pour retourner en arrière depuis la modal d'ajout de photo
+// Retourne en arrière depuis la modal d'ajout de photo
 function goBack() {
     let addModal = document.getElementById("modalAddWork");
     addModal.style.display = "none";
@@ -125,7 +104,102 @@ function goBack() {
 
 document.getElementById("modal-back").addEventListener("click", goBack);
 
-// Fonction pour rajouter les catégories dans le formulaire
+// Ajoute une preview de l'image dans le formulaire
+function previewImage(event) {
+    let preview = document.getElementById("previewImage");
+    let file = event.target.files[0];
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+    } else {
+        preview.src = "";
+        preview.style.display = "none";
+    }
+}
+
+// désactive l'affichage de <i> <p> et <label> si une image est preview
+function hideText() {
+    let preview = document.getElementById("previewImage");
+    let icon = document.querySelector(".fa-image");
+    let text = document.querySelector(".AddPicture-container p");
+    let div = document.querySelector(".AddPicture-container");
+    let label = document.querySelector(".FileLabel");
+    if (preview.src) {
+        div.style.padding = "0";
+        icon.style.display = "none";
+        text.style.display = "none";
+        label.style.display = "none";
+    } else {
+        icon.style.display = "block";
+        text.style.display = "block";
+        label.style.display = "block";
+    }
+}
+
+// Fonction pour vérifier si tous les champs sont remplis
+function checkFormFields() {
+    let fileInput = document.getElementById("file");
+    let titleInput = document.getElementById("title");
+    let categorySelect = document.getElementById("categorySelect");
+    let submitButton = document.getElementById("addWorkButton");
+
+    if (fileInput.files.length > 0 && titleInput.value.trim() !== "" && categorySelect.value !== "") {
+        submitButton.style.backgroundColor = "#1d6154";
+    }
+}
+
+// Fonction pour reset le formulaire
+function resetForm() {
+    let form = document.getElementById("addWorkForm");
+    form.reset();
+    let preview = document.getElementById("previewImage");
+    preview.src = "";
+    preview.style.display = "none";
+    let icon = document.querySelector(".fa-image");
+    let text = document.querySelector(".AddPicture-container p");
+    let label = document.querySelector(".FileLabel");
+    let div = document.querySelector(".AddPicture-container");
+    let submitButton = document.getElementById("addWorkButton");
+    div.style.padding = "19px";
+    icon.style.display = "block";
+    text.style.display = "block";
+    label.style.display = "block";
+    submitButton.style.backgroundColor = "";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// GESTION DE LA MODALE ----- APPEL API
+
+// Appel l'API et rajoute les images dans la modal
+function fetchAndRenderWorks() {
+    let worksList = document.getElementById("modal-content");
+    worksList.innerHTML = "";
+
+    productsArray.forEach(work => {
+        let workElement = document.createElement("figure");
+        workElement.classList.add("image-container");
+        workElement.id = work.id;
+        workElement.innerHTML = `
+            <img src="${work.imageUrl}" alt="${work.title}">
+        `;
+        worksList.appendChild(workElement);
+    });
+
+    // Rajoute l'icone de suppression
+    addDeleteIcon();
+}
+
+// Appel l'API et rajoute les catégories dans le formulaire
 function fetchAndRenderCategories() {
     let categoriesSelect = document.getElementById("categorySelect");
     categoriesSelect.innerHTML = "";
@@ -146,47 +220,7 @@ function fetchAndRenderCategories() {
     });
 }
 
-// Fonction pour rajouter une preview de l'image dans le formulaire
-function previewImage(event) {
-    let preview = document.getElementById("previewImage");
-    let file = event.target.files[0];
-    if (file) {
-        preview.src = URL.createObjectURL(file);
-        preview.style.display = "block";
-    } else {
-        preview.src = "";
-        preview.style.display = "none";
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    let imageInput = document.getElementById("file");
-    if (imageInput) {
-        imageInput.addEventListener("change", previewImage);
-        imageInput.addEventListener("change", hideText);
-    }
-});
-
-// Fonction pour display:none <i> <p> et <label> si une image est preview
-function hideText() {
-    let preview = document.getElementById("previewImage");
-    let icon = document.querySelector(".fa-image");
-    let text = document.querySelector(".AddPicture-container p");
-    let div = document.querySelector(".AddPicture-container");
-    let label = document.querySelector(".FileLabel");
-    if (preview.src) {
-        div.style.padding = "0";
-        icon.style.display = "none";
-        text.style.display = "none";
-        label.style.display = "none";
-    } else {
-        icon.style.display = "block";
-        text.style.display = "block";
-        label.style.display = "block";
-    }
-}
-
-// Fonction pour ajouter l'image quand on clic sur le bouton submit
+// Appel l'API avec POST pour ajouter une image
 function addWork(event) {
     event.preventDefault();
 
@@ -217,12 +251,60 @@ function addWork(event) {
                     <img src="${data.imageUrl}" alt="${data.title}">
                 `;
                 worksList.appendChild(workElement);
+                
+                // Ajoute les images dans la gallery
+                let gallery = document.getElementById("gallery");
+                let galleryWorkElement = document.createElement("figure");
+                galleryWorkElement.classList.add("work");
+                galleryWorkElement.id = `work-${data.id}`;
+                galleryWorkElement.innerHTML = `
+                    <img src="${data.imageUrl}" alt="${data.title}">
+                    <figcaption>${data.title}</figcaption>
+                `;
+                gallery.appendChild(galleryWorkElement);
+
                 addDeleteIcon();
                 closeAddModal();
             }
         });
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Gestion du DOM
+
+document.addEventListener("DOMContentLoaded", function() {
+    let openModalGalleryButton = document.getElementById("openModalGallery");
+    if (openModalGalleryButton) {
+        openModalGalleryButton.addEventListener("click", showModal);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    fetchAndRenderWorks();
+});
+
+// Preview image
+document.addEventListener("DOMContentLoaded", function() {
+    let imageInput = document.getElementById("file");
+    if (imageInput) {
+        imageInput.addEventListener("change", previewImage);
+        imageInput.addEventListener("change", hideText);
+    }
+});
+
+// bouton submit AddWork
 document.addEventListener("DOMContentLoaded", function() {
     let addWorkForm = document.getElementById("addWorkForm");
     if (addWorkForm) {
@@ -230,18 +312,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// Fonction pour vérifier si tous les champs sont remplis
-function checkFormFields() {
-    let fileInput = document.getElementById("file");
-    let titleInput = document.getElementById("title");
-    let categorySelect = document.getElementById("categorySelect");
-    let submitButton = document.getElementById("addWorkButton");
-
-    if (fileInput.files.length > 0 && titleInput.value.trim() !== "" && categorySelect.value !== "") {
-        submitButton.style.backgroundColor = "#1d6154";
-    }
-}
-
+// Check formulaire addWorks
 document.addEventListener("DOMContentLoaded", function() {
     let fileInput = document.getElementById("file");
     let titleInput = document.getElementById("title");
@@ -253,22 +324,3 @@ document.addEventListener("DOMContentLoaded", function() {
         categorySelect.addEventListener("change", checkFormFields);
     }
 });
-
-// Fonction pour reset le formulaire
-function resetForm() {
-    let form = document.getElementById("addWorkForm");
-    form.reset();
-    let preview = document.getElementById("previewImage");
-    preview.src = "";
-    preview.style.display = "none";
-    let icon = document.querySelector(".fa-image");
-    let text = document.querySelector(".AddPicture-container p");
-    let label = document.querySelector(".FileLabel");
-    let div = document.querySelector(".AddPicture-container");
-    let submitButton = document.getElementById("addWorkButton");
-    div.style.padding = "19px";
-    icon.style.display = "block";
-    text.style.display = "block";
-    label.style.display = "block";
-    submitButton.style.backgroundColor = "";
-}

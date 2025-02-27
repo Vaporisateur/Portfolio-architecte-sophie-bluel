@@ -19,11 +19,11 @@ function login() {
         const errorMessageElement = document.getElementById("error-message");
         if (!response.ok) {
             if (response.status === 401) {
-                errorMessageElement.textContent = "Not Authorized";
+                errorMessageElement.textContent = "Erreur dans l’identifiant ou le mot de passe";
             } else if (response.status === 404) {
-                errorMessageElement.textContent = "User not found";
+                errorMessageElement.textContent = "Erreur dans l’identifiant ou le mot de passe";
             } else {
-                errorMessageElement.textContent = "An error occurred";
+                errorMessageElement.textContent = "Erreur dans l’identifiant ou le mot de passe";
             }
             throw new Error('HTTP error ' + response.status);
         }
